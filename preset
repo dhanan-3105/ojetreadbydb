@@ -1,0 +1,36 @@
+minikube start --extra-config=apiserver.runtime-config=settings.k8s.io/v1alpha1=true --extra-config=apiserver.enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,PodPreset
+
+Pod Preset:
+==========
+
+apiVersion: settings.k8s.io/v1alpha1
+kind: PodPreset
+metadata:
+  name: allow-database
+spec:
+  selector:
+    matchLabels:
+      role: frontend
+  env:
+    - name: DB_PORT
+      value: "6379"
+  volumeMounts:
+    - mountPath: /cache
+      name: cache-volume
+  volumes:
+    - name: cache-volume
+      emptyDir: {}
+
+#kubectl describe podpreset allow-database
+
+Podaccess.txt
+=============
+#kubectl run new-pod -l role=frontend --image=nginx
+#kubectl create -f podacess.txt
+#kubectl describe pod new-pod
+#kubectl get pod new-pod -o yaml
+  -- refer annotations with resource version.
+#kubectl exec -it website -- bash
+echo $DB_PORT
+df -h /cache
+exit
