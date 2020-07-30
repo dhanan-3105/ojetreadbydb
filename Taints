@@ -1,0 +1,49 @@
+Step 1:
+
+kubectl get nodes
+kubectl taint node minikube priority=zero:NoSchedule
+kubectl describe node minikube
+
+Step 2:
+
+In a pod definition, Lets add a Toleration
+
+podpre.txt
+==========
+apiVersion: v1
+kind: Pod
+metadata:
+  name: website
+  labels:
+    app: website
+    role: frontend
+  
+spec:
+  containers:
+    - name: website
+      image: nginx
+  tolerations:
+  - key: "Priority"
+    operator: "Equal"
+    value: "One"
+
+# kubectl create -f podpre.txt
+# kubectl get pods
+# kubectl describe pod website    
+
+Step 3:
+kubectl taint node minikube priority=zero:NoSchedule-
+kubectl describe node minikube
+kubectl taint node minikube priority=zero:PreferNoSchedule
+kubectl describe node minikube
+
+kubectl delete pod website
+kubectl create -f podpre.txt
+kubectl taint node minikube priority=zero:PreferNoSchedule-
+
+Step 4:
+
+kubectl taint node minikube priority=zero:NoExecute
+kubectl get pods 
+? what happened to pod running?
+kubectl taint node minikube priority=zero:NoExecute-
