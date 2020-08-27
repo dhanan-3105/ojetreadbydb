@@ -1,7 +1,134 @@
+Step 0
+Namespace Quota
+
+Step 1
 apiVersion: v1
 kind: ResourceQuota
 metadata:
   name: pod-demo
 spec:
   hard:
-    pods: "2"
+    pods: "1"
+
+Step 2
+kubectl get ns
+kubectl describe ns 
+kubectl create -f quota.txt
+kubectl describe ns quota
+kubectl run pods..
+
+Step 3
+kubectl edit ns quota
+kubectl get pods -w
+?Keep observing
+
+
+Step 1:
+Observe a Priority Class:
+kubectl get pods -n kube-system
+kubectl describe pod etcd-minikube -n kube-system
+kubectl get priorityclass
+
+Step 2:
+=======
+Define a Priority Class
+notepad priority.txt
+====================
+
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: high-priority
+value: 1000000
+globalDefault: false
+description: "This priority class should be used for XYZ service pods only."
+
+#preemptionPolicy: Never will be scheduled ahead of other jobs.
+
+Step 3:
+========
+# kubectl create -f priority.txt
+Now ,lets associate a priority class to quota.
+
+apiVersion: v1
+kind: List
+items:
+- apiVersion: v1
+  kind: ResourceQuota
+  metadata:
+    name: pods-high
+  spec:
+    hard:
+      cpu: "1000"
+      memory: 200Gi
+      pods: "10"
+    scopeSelector:
+      matchExpressions:
+      - operator : In
+        scopeName: PriorityClass
+        values: ["high-priority"]
+- apiVersion: v1
+  kind: ResourceQuota
+  metadata:
+    name: pods-medium
+  spec:
+    hard:
+      cpu: "10"
+      memory: 20Gi
+      pods: "10"
+    scopeSelector:
+      matchExpressions:
+      - operator : In
+        scopeName: PriorityClass
+        values: ["medium"]
+- apiVersion: v1
+  kind: ResourceQuota
+  metadata:
+    name: pods-low
+  spec:
+    hard:
+      cpu: "5"
+      memory: 10Gi
+      pods: "10"
+    scopeSelector:
+      matchExpressions:
+      - operator : In
+        scopeName: PriorityClass
+        values: ["low"]
+
+
+Step 4:
+# kubectl create -f quotas.txt
+# kubectl describe quota 
+? observe the quotas arent utilized yet.
+
+Step 5:
+Now, Lets create a pod with Priority Class -- High-Priority
+
+notepad podpri.txt
+=================
+apiVersion: v1
+kind: Pod
+metadata:
+  name: high-priority
+spec:
+  containers:
+  - name: high-priority
+    image: ubuntu
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do echo hello; sleep 10;done"]
+    resources:
+      requests:
+        memory: "10Gi"
+        cpu: "500m"
+      limits:
+        memory: "10Gi"
+        cpu: "500m"
+  priorityClassName: high-priority
+
+#kubectl create -f podpri.txt
+#kubectl get pods
+#kubectl describe pod high-priority
+#kubectl describe quota
+? do you observe utilization
+ 
