@@ -1,0 +1,23 @@
+install kubectl windows
+https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/windows/amd64/kubectl.exe
+
+install minikube windows
+https://github.com/kubernetes/minikube/releases/download/v1.9.2/minikube-installer.exe
+
+install minikube mac
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/v1.9.2/minikube-darwin-amd64 && sudo chmod +x minikube && sudo cp minikube /usr/local/bin/ && sudo rm minikube
+
+
+docker run -d --name logs10\
+    --log-driver json-file \
+    --log-opt max-size=1k \
+    --log-opt max-file=10 \
+    --log-opt mode=non-blocking \
+    alpine /bin/sh -c "while true; do sleep 2; df -h; done"
+
+
+C:/programfiles/kubernetes/minikube --> kubectl.exe
+
+kprabhat484@gmail.com
+surajsinh.kawade@gmail.com
+
