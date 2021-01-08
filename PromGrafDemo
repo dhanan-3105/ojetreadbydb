@@ -16,8 +16,5 @@ docker run -d --name logs10\
     alpine /bin/sh -c "while true; do sleep 2; df -h; done"
 
 
-C:/programfiles/kubernetes/minikube --> kubectl.exe
 
-kprabhat484@gmail.com
-surajsinh.kawade@gmail.com
 
