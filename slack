@@ -1,0 +1,77 @@
+ 
+Step 1
+app.slack.com
+https://slack.com/create#email
+--Confirm email..
+-- Confim Workspace Completion
+
+Step 2
+In apps page, add Incoming WebHooks 
+Add to Slack
+Copy WebHook URL on the settings page 
+https://hooks.slack.com/services/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
+
+Step 3:
+notepad slacker.sh
+==================
+#! /bin/sh
+echo $WEBHOOK
+wget --header='Content-Type:application/json' --post-data="{\"channel\": \"$CHANNEL\", \"username\": \"StandupBot\", \"text\": \"$MESSAGE\", \"icon_emoji\": \":rocket:\"}" $WEBHOOK
+
+Step 4:
+========
+kubectl create cm slacker --from-file=slacker.sh
+kubectl describe cm slacker
+kubectl get cm slacker -o yaml
+
+Step 5:
+=======
+notepad notifications.txt
+=========================
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: standup
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: standup
+            image: busybox
+            resources:
+              requests:
+                cpu: 1m
+                memory: 100Mi
+            env:
+              - name: WEBHOOK
+                value: "https://hooks.slack.com/services/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"
+              - name: CHANNEL
+                value: "#general"
+              - name: MESSAGE
+                value: ":dog: Hey want to stand up?"
+            command: ["sh","/scripts/slacker.sh"]
+            volumeMounts:
+            - name: slacker
+              mountPath: /scripts
+          volumes:
+          - name: slacker
+            configMap:
+              name: slacker
+              defaultMode: 0744
+          restartPolicy: OnFailure
+
+kubectl create -f notifications.txt
+
+Step 6:
+========
+kubectl get cronjobs
+kubectl get jobs
+kubectl get pods , filter for standby pods
+kubectl logs << podname>>
+
+Step 7:
+=======
+visit your slack page, login and open channel - 
