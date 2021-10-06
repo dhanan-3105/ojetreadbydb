@@ -9,10 +9,10 @@ app.get('/listemployees', function (req, res) {
    res.setHeader('Access-Control-Allow-Origin', 'http://192.168.99.100:8000');  
 
    var con = mysql.createConnection({
-    host: "172.20.10.10",
+    host: "172.100.100.100",
     user: "root",
     password: "admin",
-    database: "company"
+    database: "demo"
    });
   con.connect(function(err) {
   if (err) throw err;
