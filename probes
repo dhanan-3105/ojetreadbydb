@@ -1,0 +1,45 @@
+Liveness and Readiness Example :
+================================
+#The kubelet will send the first readiness probe 5 seconds after the container starts. This will attempt to connect to the goproxy container on port 8080. If the probe succeeds, the pod will #be marked as ready. The kubelet will continue to run this check every 10 seconds.
+#In addition to the readiness probe, this configuration includes a liveness probe. The kubelet will run the first liveness probe 15 seconds after the container starts. Just like the readiness #probe, this will attempt to connect to the goproxy container on port 8080. If the liveness probe fails, the container will be restarted.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: goproxy
+  labels:
+    app: goproxy
+spec:
+  containers:
+  - name: goproxy
+    image: k8s.gcr.io/goproxy:0.1
+    ports:
+    - name: liveness-port
+      containerPort: 8080
+      hostPort: 8080
+    readinessProbe:
+      tcpSocket:
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: liveness-port
+      initialDelaySeconds: 15
+      periodSeconds: 20
+
+
+
+Image code:
+-----------
+http.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+    duration := time.Now().Sub(started)
+    if duration.Seconds() > 10 {
+        w.WriteHeader(500)
+        w.Write([]byte(fmt.Sprintf("error: %v", duration.Seconds())))
+    } else {
+        w.WriteHeader(200)
+        w.Write([]byte("ok"))
+    }
+})
