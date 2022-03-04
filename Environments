@@ -118,6 +118,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: secret-envars-test-pod
+  namespace: demo
 spec:
   containers:
   - name: envars-test-container
@@ -126,12 +127,12 @@ spec:
     - name: SECRET_USERNAME
       valueFrom:
         secretKeyRef:
-          name: txtkeys
+          name: database-secrets
           key: username
     - name: SECRET_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: txtkeys
+          name: database-secrets
           key: password
 
 Example :6
