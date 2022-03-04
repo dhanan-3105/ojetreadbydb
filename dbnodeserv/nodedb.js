@@ -3,7 +3,7 @@ var data="";
 var express = require('express');
 var app = express();
 
-app.get('/listemployees', function (req, res) {
+app.get('/', function (req, res) {
   res.setHeader('content-type','application/json');
    res.setHeader('Access-Control-Allow-Origin', 'http://192.168.99.100:9000/listemployees');  
    res.setHeader('Access-Control-Allow-Origin', 'http://192.168.99.100:8000');  
