@@ -12,11 +12,11 @@ app.get('/', function (req, res) {
     host: "172.100.100.100",
     user: "root",
     password: "admin",
-    database: "pythonlogin"
+    database: "demo"
    });
   con.connect(function(err) {
   if (err) throw err;
-    con.query("SELECT * FROM accounts", function (err, result, fields) {
+    con.query("SELECT * FROM employees", function (err, result, fields) {
     if (err) throw err;
      data=JSON.stringify(result); 
      console.log(data);
