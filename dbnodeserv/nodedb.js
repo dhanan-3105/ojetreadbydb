@@ -9,7 +9,7 @@ app.get('/', function (req, res) {
    res.setHeader('Access-Control-Allow-Origin', 'http://192.168.99.100:8000');  
 
    var con = mysql.createConnection({
-    host: "172.100.100.100",
+    host: "update the FQDNS",
     user: "root",
     password: "admin",
     database: "pythonlogin"
